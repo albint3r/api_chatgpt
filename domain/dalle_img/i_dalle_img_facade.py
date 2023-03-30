@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class ICompletionFacade(ABC):
+class IDalleImgFacade(ABC):
 
     @abstractmethod
     def create(self, *, prompt: str):
