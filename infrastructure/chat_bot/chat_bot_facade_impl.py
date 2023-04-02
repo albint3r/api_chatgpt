@@ -17,6 +17,7 @@ class ChatBotFacade(IChatBotFacade):
     config : APIConfiguration
         The API configuration object containing the necessary API key.
     """
+
     @inject
     def __init__(self, config: APIConfiguration):
         """
@@ -34,7 +35,7 @@ class ChatBotFacade(IChatBotFacade):
         Start and run the chatbot conversation until it is finished.
         """
         openai.api_key = self.config.api_key
-        chat = Chat()
+        chat = Chat(verbose=False)
         while not chat.is_finished:
             user_msg = Message.from_user(prompt=chat.input_user())
             chat.add(user_msg)
@@ -43,6 +44,9 @@ class ChatBotFacade(IChatBotFacade):
                 messages=chat.messages
             )
             prediction = Prediction.from_json(prediction_response)
+            chat.update_used_tokens(prediction.total_tokens)
             assistant_msg = Message.from_assistant(prediction.message)
             chat.add(assistant_msg)
             chat.show()
+            # If the Chat is above 1k tokens it will be resumed to maintain the conversation context
+            chat.update_resume_chat(call_back=openai.Completion.create)

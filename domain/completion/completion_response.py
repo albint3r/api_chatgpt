@@ -20,7 +20,7 @@ class CompletionResponse:
         self.usage: dict = usage
 
     @property
-    def text(self) -> str | None:
+    def message(self) -> str | None:
         return self.choices[0].get('text')
 
     @classmethod

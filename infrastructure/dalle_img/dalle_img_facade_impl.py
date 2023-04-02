@@ -30,7 +30,7 @@ class DalleImgFacadeImpl(IDalleImgFacade):
         """
         openai.api_key = self.config.api_key
         print('Dalle Image Creator:')
-        print('-'*100)
+        print('-' * 100)
         user_input = input('>:')
         print('wait response...')
         response = openai.Image.create(prompt=user_input, n=1, size=size)

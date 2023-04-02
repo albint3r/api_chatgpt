@@ -42,4 +42,6 @@ class Prediction(JsonSerialize):
         """
         return self.choices[0].get('message').get('content')
 
-
+    @property
+    def total_tokens(self) -> int | None:
+        return self.usage.get('total_tokens')

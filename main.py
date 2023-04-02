@@ -2,7 +2,6 @@ from injector import Injector
 
 from infrastructure.chat_bot.chat_bot_facade_impl import ChatBotFacade
 from infrastructure.dalle_img.dalle_img_facade_impl import DalleImgFacadeImpl
-# from infrastructure.completion.completion_facade_impl import CompletionFacadeImpl
 from injectable import AppModule
 
 injector = Injector(AppModule())
@@ -15,7 +14,7 @@ def main_chat() -> None:
 
 def main_img() -> None:
     facade = injector.get(DalleImgFacadeImpl)
-    response = facade.run()
+    facade.run()
 
 
 if __name__ == '__main__':
