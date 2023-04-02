@@ -18,7 +18,7 @@ class DalleImgFacadeImpl(IDalleImgFacade):
         """
         self.config: APIConfiguration = config
 
-    def create(self, *, prompt: str, size: str = '512x512') -> ImgResponse:
+    def run(self, *, size: str = '512x512') -> ImgResponse:
         """Create a new DALL-E image request and return the response.
 
         Parameters:
@@ -29,7 +29,10 @@ class DalleImgFacadeImpl(IDalleImgFacade):
             An ImgResponse object representing the response to the DALL-E image request.
         """
         openai.api_key = self.config.api_key
-        response = openai.Image.create(prompt=prompt, n=1, size=size)
+        print('Dalle Image Creator:')
+        print('-'*100)
+        user_input = input('>:')
+        print('wait response...')
+        response = openai.Image.create(prompt=user_input, n=1, size=size)
+        print(response)
         return ImgResponse.from_json(response)
-
-

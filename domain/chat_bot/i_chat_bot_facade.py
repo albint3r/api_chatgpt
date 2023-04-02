@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class IDalleImgFacade(ABC):
+class IChatBotFacade(ABC):
 
     @abstractmethod
     def run(self):
