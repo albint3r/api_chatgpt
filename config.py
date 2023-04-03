@@ -17,3 +17,7 @@ class APIConfiguration:
     @property
     def api_temperature(self) -> float:
         return float(self._env.get('TEMPERATURE'))
+
+    @property
+    def hugging_face_token(self) -> str:
+        return self._env.get('HUGGING_FACE_TOKEN')
