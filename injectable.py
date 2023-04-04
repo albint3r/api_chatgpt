@@ -1,7 +1,7 @@
 from injector import Module, provider
 
 from config import APIConfiguration
-from infrastructure.message_classifier.topic_predictor_facade_impl import MessageClassifierFacade
+from infrastructure.message_classifier.message_classifier_facade_impl import MessageClassifierFacadeImpl
 
 
 class AppModule(Module):
@@ -10,5 +10,5 @@ class AppModule(Module):
         return APIConfiguration()
 
     @provider
-    def provide_i_topic_predictor_facade(self) -> MessageClassifierFacade:
-        return MessageClassifierFacade()
+    def provide_i_topic_predictor_facade(self) -> MessageClassifierFacadeImpl:
+        return MessageClassifierFacadeImpl()

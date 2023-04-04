@@ -2,9 +2,14 @@ import os
 from dataclasses import dataclass, field
 from typing import Callable
 
+import openai
+
+from config import APIConfiguration
 from domain._json_serialize import JsonSerialize
 from domain.chat_bot.message import Message
+from domain.chat_bot.prediction import Prediction
 from domain.completion.completion_response import CompletionResponse
+from infrastructure.message_classifier.message_classifier_facade_impl import MessageClassifierFacadeImpl
 
 
 @dataclass
@@ -29,6 +34,8 @@ class Chat(JsonSerialize):
     _max_tokens : int
         The maximum number of tokens allowed in the chat, default is 400.
     """
+
+    config: APIConfiguration
     verbose: bool = field(kw_only=True, default=False)
     _current_chat: list[Message] | None = field(init=False)
     _history_chat: list[Message] | None = field(init=False, default_factory=list)
@@ -50,6 +57,10 @@ class Chat(JsonSerialize):
     @property
     def history(self) -> list[Message]:
         return self._history_chat
+
+    @property
+    def last_message(self) -> Message:
+        return self._history_chat[-1]
 
     @property
     def used_tokens(self) -> int:
@@ -99,6 +110,26 @@ class Chat(JsonSerialize):
         ]
         self._current_chat = [Message.from_json(json) for json in STARTING_MSG]
 
+    def _get_message_classification(self, message: Message):
+        msg_classifier = MessageClassifierFacadeImpl()
+        msg_classifier.initialize(self.config)
+        return msg_classifier.predict(message)
+
+    def _chat_completion_create(self) -> Prediction:
+        openai.api_key = self.config.api_key
+        prediction_response = openai.ChatCompletion.create(
+            model=self.model,
+            messages=self.messages
+        )
+        return Prediction.from_json(prediction_response)
+
+    def process_message_response(self) -> Message:
+        # TODO DO IT SOMETHING WITH THE MESSAGE -> message
+        # TODO DO IT SOMETHING WITH THE MESSAGE -> _get_message_classification
+        prediction = self._chat_completion_create()
+        self.update_used_tokens(prediction.total_tokens)
+        return Message.from_assistant(prediction.message)
+
     def update_used_tokens(self, current_used_tokens: int) -> None:
         """Update the number of used tokens in the chat.
 
@@ -118,7 +149,7 @@ class Chat(JsonSerialize):
         """
         self.used_tokens = current_used_tokens
 
-    def input_user(self) -> str:
+    def prompt_user(self) -> str:
         """Prompt the user for input and return the entered text."""
         return input(self._prefix)
 

@@ -5,7 +5,7 @@ from domain.chat_bot.message import Message
 from domain.message_classifier.i_message_classifier_facade import IMessageClassifierFacade
 
 
-class MessageClassifierFacade(IMessageClassifierFacade):
+class MessageClassifierFacadeImpl(IMessageClassifierFacade):
 
     def __init__(self):
         self.classifier: Pipeline | None = None
